@@ -27,7 +27,6 @@
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 ### Global Test Variables
-TANG_FUNCTION_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TO_BUNDLE="15m"
 TANG_FUNCTION_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TEST_NAMESPACE_PATH="${TANG_FUNCTION_DIR}/reg_test/all_test_namespace"
@@ -290,8 +289,12 @@ analyzeVersion() {
 }
 
 useUpstreamImages(){
-    for yaml_file in `find ${TANG_FUNCTION_DIR}/reg_test \( -iname "*.yaml" -o -iname "*.sh" \) -type f -print`
+    for yaml_file in `find ${TANG_FUNCTION_DIR}/reg_test* \( -iname "*.yaml" -o -iname "*.sh" \) -type f -print`
     do
         sed -i "s~\"registry.redhat.io/rhel9/tang\"~\"${TANG_IMAGE}\"~g" $yaml_file
     done
+}
+
+checkKonflux() {
+    pushd ${TANG_FUNCTION_DIR}; rm -v reg_test; test -z "${KONFLUX}" && ln -s reg_test_ori reg_test || ln -s reg_test_openshift_konflux reg_test; popd
 }
